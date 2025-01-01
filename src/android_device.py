@@ -142,7 +142,7 @@ class AndroidDevice:
         self.execute_shell_command(f"pm clear {package_name}")
         logger.info("Cleared app data for %s", package_name)
 
-    def grant_permissions(self, package_name: str, permissions: list):
+    def grant_permissions(self, package_name: str, permissions: list[str]):
         """Grant required permissions to an app.
         pakage_name: str: Package name of the app.
         permissions: list: List of permissions to grant.
