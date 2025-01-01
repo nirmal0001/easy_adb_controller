@@ -1,0 +1,13 @@
+[project]
+name = "easy-adb-controller"
+version = "0.1.0"
+description = "adb module to controll android in easy way"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pure-python-adb>=0.3.0.dev0",
+    "requests>=2.32.3",
+]
+
+[tool.uv.workspace]
+members = ["tests"]
