@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class AndroidDevice:
     """Control Android using adb with enhanced input validation and logging.
+
     ip: str: IP address of the Android device.
     port: int: Port number of the Android device.
     ocr_key: str: API key for OCR from api-ninjas.com. (Optional)
@@ -41,7 +42,11 @@ class AndroidDevice:
         logger.info("Executed shell command: %s", command)
 
     def simulate_touch(self, x: int, y: int):
-        """Simulate a tap or touch."""
+        """Simulate a tap or touch.
+        
+        x: int: X coordinate of screen.
+        y: in: Y coordinate of screen.
+        """
         if not isinstance(x, int) or not isinstance(y, int):
             raise ValueError("Coordinates must be integers.")
         self.execute_shell_command(f"input tap {x} {y}")
@@ -49,6 +54,7 @@ class AndroidDevice:
 
     def clear_input(self, length: int = 40):
         """Clear input if it's selected.
+
         length: int: Length of the input to clear.
         """
         if not isinstance(length, int) or length <= 0:
@@ -64,6 +70,7 @@ class AndroidDevice:
 
     def press_key(self, key_code: int):
         """Press a key on the keyboard.
+
         keycode: int: Key code to press. (check code from .KeyCode )
         """
         if not isinstance(key_code, int) or key_code <= 0:
@@ -73,6 +80,7 @@ class AndroidDevice:
 
     def enter_text(self, text: str):
         """Enter text.
+
         text: str: Text to enter.
         """
         if not isinstance(text, str) or not text:
@@ -82,6 +90,7 @@ class AndroidDevice:
 
     def connect_to_proxy(self, proxy_ip: str, proxy_port: int):
         """Connect to a proxy on Android.
+
         proxy_ip: str: Proxy IP address.
         proxy_port: int: Proxy port.
         """
@@ -101,6 +110,7 @@ class AndroidDevice:
 
     def open_app(self, package_name: str, activity_name: str = None):
         """Open an Android app with or without an activity.
+
         package_name: str: Package name of the app. (Required)
         activity_name: str: Activity name of the app. (Optional)
         """
@@ -109,16 +119,16 @@ class AndroidDevice:
         if activity_name is None:
             self.execute_shell_command(f"am start -n {package_name}")
             logger.info("Opened app: %s.", package_name)
-        else:
-            if not activity_name or not isinstance(activity_name, str):
-                raise ValueError("Activity name must be a non-empty string.")
-            self.execute_shell_command(f"am start -n {package_name}/{activity_name}")
-            logger.info(
-                "Opened app: %s, with activity: %s.", package_name, activity_name
-            )
+        if not activity_name or not isinstance(activity_name, str):
+            raise ValueError("Activity name must be a non-empty string.")
+        self.execute_shell_command(f"am start -n {package_name}/{activity_name}")
+        logger.info(
+            "Opened app: %s, with activity: %s.", package_name, activity_name
+        )
 
     def install_app(self, pakage_location: str):
         """Install a package from a given location.
+
         pakage_location: str: Location of the package to install.
         """
         if pakage_location is None or not isinstance(pakage_location, str):
@@ -128,6 +138,7 @@ class AndroidDevice:
 
     def uninstall_app(self, package_name: str):
         """Uninstall an app.
+
         pakage_name: str: Package name of the app.
         """
         if not package_name or not isinstance(package_name, str):
@@ -144,6 +155,7 @@ class AndroidDevice:
 
     def grant_permissions(self, package_name: str, permissions: list[str]):
         """Grant required permissions to an app.
+
         pakage_name: str: Package name of the app.
         permissions: list: List of permissions to grant.
         """
@@ -162,6 +174,7 @@ class AndroidDevice:
         local_path: str = "screenshot.png",
     ):
         """Capture a screenshot and pull it to local storage.
+
         local_path: str: Local path to save the screenshot.
         """
         if not isinstance(local_path, str) or not local_path:
@@ -175,6 +188,7 @@ class AndroidDevice:
         self, text: list[str] | str, response: str = None
     ) -> bool:
         """Check if a given text is present in a screenshot using OCR.
+
         text: list: List of text to check in the screenshot or Single text.
         response: str: OCR response to check the text in. If None, OCR will be performed.
         """
@@ -187,25 +201,24 @@ class AndroidDevice:
             response = self.extract_text()
         if response in (None, False):
             return False
-        else:
-            response = response.lower()
-            if isinstance(text, list):
-                for t in text:
-                    try:
-                        if t.lower() in response:
-                            return True
-                    except Exception as e:
-                        logger.error("Error in text comparison: %s", e)
-                        return False
-            elif isinstance(text, str):
+        response = response.lower()
+        if isinstance(text, list):
+            for t in text:
                 try:
-                    if text.lower() in response:
+                    if t.lower() in response:
                         return True
                 except Exception as e:
                     logger.error("Error in text comparison: %s", e)
                     return False
-            logger.info("Text not found in screenshoot")
-            return False
+        elif isinstance(text, str):
+            try:
+                if text.lower() in response:
+                    return True
+            except Exception as e:
+                logger.error("Error in text comparison: %s", e)
+                return False
+        logger.info("Text not found in screenshoot")
+        return False
 
     def extract_text(self) -> str | bool:
         """extract in a screenshot using OCR."""
@@ -223,11 +236,10 @@ class AndroidDevice:
 
             if response.status_code == 200:
                 return " ".join([text["text"] for text in response.json()])
-            else:
-                logger.error(
-                    "Error in OCR API: %s, %s", response.status_code, response.text
-                )
-                return False
+            logger.error(
+                "Error in OCR API: %s, %s", response.status_code, response.text
+            )
+            return False
         except Exception as e:
             logger.error("Error during OCR process: %s", e)
             return False

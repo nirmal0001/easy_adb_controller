@@ -1,8 +1,5 @@
-from dataclasses import dataclass
-
-
-@dataclass
-class KeyCode:
+from enum import Enum
+class KeyCode(Enum):
     """Keycode For easy adb controller"""
 
     Home = 3
@@ -52,8 +49,8 @@ class KeyCode:
     Slash = 76
 
 
-@dataclass
-class AndroidPermissions:
+
+class AndroidPermissions(Enum):
     """Android Permissions"""
 
     INTERNET = "android.permission.INTERNET"

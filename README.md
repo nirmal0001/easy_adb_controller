@@ -12,19 +12,18 @@ A Python module for controlling Android devices using ADB (Android Debug Bridge)
 
 ## Installation
 ```bash
-fork the repo
-pip install -e .
+pip install git+https://github.com/nirmal0001/easy_adb_controller
 ```
 
 ## Requirements
-- Python 3.6+
+- Python 3.8+
 - pure-python-adb.
 - requests (for OCR functionality)
 
 ## Quick Start
 ```python
 from easy_adb_controller import AndroidDevice
-
+from easy_adb_controller import AndroidPermissions
 # Connect to device
 device = AndroidDevice(ip="127.0.0.1", port=5037)
 
@@ -35,8 +34,19 @@ device.capture_screenshot(local_path="my_screenshot.png")
 
 # App management
 device.open_app(package_name="com.example.app")
-device.open_app(package_name="com.example.app", activity_name="main_activity")  # with specific activity
+# with specific activity
+device.open_app(package_name="com.example.app", activity_name="main_activity") 
 device.install_app("path/to/app.apk")
+device.capture_screenshot(local_path="screenshot.png")
+device.extract_text()
+device.check_text_in_screenshot(text=["hello", "world"])
+device.clear_app_data(package_name="com.example.app")
+#get all permissions from easy_adb_controller.AndroidPermissions
+gdevice.grant_permissions(package_name="com.example.app", permissions=[AndroidPermissions.WRITE_EXTERNAL_STORAGE, AndroidPermissions.READ_EXTERNAL_STORAGE]) 
+
+# connect to proxy
+device.connect_to_proxy(ip: str, port: int)
+device.disconnect_proxy()
 ```
 
 ## Core Features
@@ -74,7 +84,7 @@ device = AndroidDevice(ip: str, port: int, ocr_key: str = None)
 - `port`: Port number for ADB connection
 - `ocr_key`: Optional API key for OCR functionality (get key from api-ninjas.com)
 
-#### Main Methods
+#### Methods on device
 - `simulate_touch(x: int, y: int)`
 - `enter_text(text: str)`
 - `open_app(package_name: str, activity_name: str = None)`
@@ -82,7 +92,7 @@ device = AndroidDevice(ip: str, port: int, ocr_key: str = None)
 - `capture_screenshot(local_path: str = "screenshot.png")`
 - `check_text_in_screenshot(text: list[str] | str, response: str = None) -> bool`
 - `clear_app_data(package_name: str)`
-- `grant_permissions(package_name: str, permissions: list[str])` # get permissions from easy_adb_controller.AndroidPermissions
+- `grant_permissions(package_name: str, permissions: list[str])` get permissions from easy_adb_controller.AndroidPermissions
 - `connect_to_proxy(ip: str, port: int)`
 - `disconnect_proxy()`
 
@@ -94,7 +104,7 @@ The module includes comprehensive input validation and error handling:
 - Detailed error logging
 
 ## License
-[MIT](/license)
+[MIT](/LICENSE)
 
 ## Contributing
 - Fork the repository
