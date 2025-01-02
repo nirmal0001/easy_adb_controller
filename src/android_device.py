@@ -154,6 +154,7 @@ class AndroidDevice:
 
         package_name: str: Package name of the app.
         permissions: list: List of permissions to grant.
+        permissions are available in .AndroidPermissions
         """
         if not package_name or not isinstance(package_name, str):
             raise ValueError("Package name must be a non-empty string.")

@@ -86,13 +86,14 @@ device = AndroidDevice(ip: str, port: int, ocr_key: str = None)
 
 #### Methods on device
 - `simulate_touch(x: int, y: int)`
+- `press_key(key_code: int)`
 - `enter_text(text: str)`
 - `open_app(package_name: str, activity_name: str = None)`
 - `install_app(package_location: str)`
 - `capture_screenshot(local_path: str = "screenshot.png")`
 - `check_text_in_screenshot(text: list[str] | str, response: str = None) -> bool`
 - `clear_app_data(package_name: str)`
-- `grant_permissions(package_name: str, permissions: list[str])` get permissions from easy_adb_controller.AndroidPermissions
+- `grant_permissions(package_name: str, permissions: list[str])`
 - `connect_to_proxy(ip: str, port: int)`
 - `disconnect_proxy()`
 
