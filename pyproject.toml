@@ -1,7 +1,7 @@
 [project]
 name = "easy-adb-controller"
 version = "0.1.0"
-description = "adb module to controll android in easy way"
+description = "adb module to control android in easy way"
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
