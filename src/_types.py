@@ -1,4 +1,6 @@
 from enum import Enum
+
+
 class KeyCode(Enum):
     """Keycode For easy adb controller"""
 
@@ -47,7 +49,6 @@ class KeyCode(Enum):
     Minus = 69
     Star = 17
     Slash = 76
-
 
 
 class AndroidPermissions(Enum):

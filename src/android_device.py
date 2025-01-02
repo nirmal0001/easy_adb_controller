@@ -1,12 +1,10 @@
 """Android controller in python using pure-python-adb."""
 
-import logging
-
 import requests
 from ppadb.client import Client as AdbClient
 from ppadb.device import Device
 
-logger = logging.getLogger(__name__)
+from . import AndroidPermissions, KeyCode, logger
 
 
 class AndroidDevice:
@@ -43,7 +41,7 @@ class AndroidDevice:
 
     def simulate_touch(self, x: int, y: int):
         """Simulate a tap or touch.
-        
+
         x: int: X coordinate of screen.
         y: in: Y coordinate of screen.
         """
@@ -73,10 +71,10 @@ class AndroidDevice:
 
         keycode: int: Key code to press. (check code from .KeyCode )
         """
-        if not isinstance(key_code, int) or key_code <= 0:
+        if not isinstance(key_code, int) or not isinstance(key_code, KeyCode):
             raise ValueError("Key code must be a positive integer.")
-        self.execute_shell_command(f"input keyevent {key_code}")
-        logger.info("Pressed key with code: %s", key_code)
+        self.execute_shell_command(f"input keyevent {key_code.value}")
+        logger.info("Pressed key with code: %s", key_code.name)
 
     def enter_text(self, text: str):
         """Enter text.
@@ -122,24 +120,22 @@ class AndroidDevice:
         if not activity_name or not isinstance(activity_name, str):
             raise ValueError("Activity name must be a non-empty string.")
         self.execute_shell_command(f"am start -n {package_name}/{activity_name}")
-        logger.info(
-            "Opened app: %s, with activity: %s.", package_name, activity_name
-        )
+        logger.info("Opened app: %s, with activity: %s.", package_name, activity_name)
 
-    def install_app(self, pakage_location: str):
+    def install_app(self, package_location: str):
         """Install a package from a given location.
 
-        pakage_location: str: Location of the package to install.
+        package_location: str: Location of the package to install.
         """
-        if pakage_location is None or not isinstance(pakage_location, str):
+        if package_location is None or not isinstance(package_location, str):
             raise ValueError("Package location must be a non-empty string.")
-        self.device.install(pakage_location)
-        logger.info("Installed app from %s", pakage_location)
+        self.device.install(package_location)
+        logger.info("Installed app from %s", package_location)
 
     def uninstall_app(self, package_name: str):
         """Uninstall an app.
 
-        pakage_name: str: Package name of the app.
+        package_name: str: Package name of the app.
         """
         if not package_name or not isinstance(package_name, str):
             raise ValueError("Package name must be a non-empty string.")
@@ -156,17 +152,17 @@ class AndroidDevice:
     def grant_permissions(self, package_name: str, permissions: list[str]):
         """Grant required permissions to an app.
 
-        pakage_name: str: Package name of the app.
+        package_name: str: Package name of the app.
         permissions: list: List of permissions to grant.
         """
         if not package_name or not isinstance(package_name, str):
             raise ValueError("Package name must be a non-empty string.")
         if not isinstance(permissions, list) or not all(
-            isinstance(p, str) for p in permissions
+            isinstance(p, AndroidPermissions) for p in permissions
         ):
             raise ValueError("Permissions must be a list of non-empty strings.")
         for permission in permissions:
-            self.execute_shell_command(f"pm grant {package_name} {permission}")
+            self.execute_shell_command(f"pm grant {package_name} {permission.value}")
         logger.info("Granted permissions to %s", package_name)
 
     def capture_screenshot(
@@ -217,7 +213,7 @@ class AndroidDevice:
             except Exception as e:
                 logger.error("Error in text comparison: %s", e)
                 return False
-        logger.info("Text not found in screenshoot")
+        logger.info("Text not found in screenshot")
         return False
 
     def extract_text(self) -> str | bool:

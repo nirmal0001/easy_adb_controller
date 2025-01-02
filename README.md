@@ -42,7 +42,7 @@ device.extract_text()
 device.check_text_in_screenshot(text=["hello", "world"])
 device.clear_app_data(package_name="com.example.app")
 #get all permissions from easy_adb_controller.AndroidPermissions
-gdevice.grant_permissions(package_name="com.example.app", permissions=[AndroidPermissions.WRITE_EXTERNAL_STORAGE, AndroidPermissions.READ_EXTERNAL_STORAGE]) 
+device.grant_permissions(package_name="com.example.app", permissions=[AndroidPermissions.WRITE_EXTERNAL_STORAGE, AndroidPermissions.READ_EXTERNAL_STORAGE]) 
 
 # connect to proxy
 device.connect_to_proxy(ip: str, port: int)
